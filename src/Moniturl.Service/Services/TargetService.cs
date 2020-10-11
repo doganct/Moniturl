@@ -29,11 +29,21 @@ namespace Moniturl.Service
             };
         }
 
-        public async Task<ServiceResult> Delete(int targetId)
+        public async Task<ServiceResult> DeleteAsync(int targetId)
         {
             await _targerRepository.Delete(targetId);
 
             return new ServiceResult();
+        }
+
+        public async Task<ServiceResult<TargetDto>> GetTargetAsync(int id)
+        {
+            var target = await _targerRepository.GetByIdAsync(id);
+
+            return new ServiceResult<TargetDto>
+            {
+                Result = _mapper.Map<TargetDto>(target)
+            };
         }
 
         public async Task<ServiceResult<Pagination<TargetDto>>> GetTargetsAsync(TargetSearchParams targetSearchParams)
@@ -54,9 +64,16 @@ namespace Moniturl.Service
             };
         }
 
-        public Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto)
+        public async Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto)
         {
-            throw new System.NotImplementedException();
+            var target = _mapper.Map<Target>(targetDto);
+
+            var updatedTarget = await _targerRepository.UpdateAsync(target);
+
+            return new ServiceResult<TargetDto>
+            {
+                Result = _mapper.Map<TargetDto>(updatedTarget)
+            };
         }
     }
 }

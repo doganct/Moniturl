@@ -32,35 +32,39 @@ namespace Moniturl.Service
 
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
-            return await ApplySpecification(spec).CountAsync();
+            return await ApplySpecification(spec).AsNoTracking().CountAsync();
         }
 
         public async Task Delete(int id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
-            _context.Set<T>().Remove(entity);
+
+            entity.Status = false;
+            entity.UpdatedDate = DateTime.Now;
+
+            _context.Set<T>().Update(entity);
 
             await _context.SaveChangesAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllBySpecAsync(ISpecification<T> spec)
         {
-            return await ApplySpecification(spec).ToListAsync();
+            return await ApplySpecification(spec).AsNoTracking().ToListAsync();
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x=> x.Id == id);
         }
 
         public async Task<T> GetBySpecAsync(ISpecification<T> spec)
         {
-            return await ApplySpecification(spec).FirstOrDefaultAsync();
+            return await ApplySpecification(spec).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public async Task<T> UpdateAsync(T model)

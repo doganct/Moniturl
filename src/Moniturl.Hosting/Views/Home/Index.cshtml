@@ -26,15 +26,42 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="confirm-delete-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                Silmeyi Onayla
+            </div>
+            <div class="modal-body">
+                Seçtiğiniz veriyi silmek istediğinize emin misiniz?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                <a class="btn btn-danger btn-ok">Evet</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
     <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
+
+            $("body").on("click", ".confirm-delete", function (e) {
+                var url = $(e.currentTarget).data('href');
+                var returnUrl = $(e.currentTarget).data('return-url');
+                url = url + "&returnUrl=" + returnUrl;
+                $("#confirm-delete-modal").find('.btn-ok').attr('href', url);
+                $("#confirm-delete-modal").modal('show');
+            });
+
             $('#target-table').DataTable({
-                "processing": true,   
-                "serverSide": true, 
-                "filter": true,    
-                "orderMulti": false,    
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json"
                 },
@@ -57,11 +84,11 @@
                         "render": function (data, type, row, meta) { return '<a class="btn btn-warning" href="/Home/Update/' + row.id + '">Düzenle</a>'; }
                     },
                     {
-                        "render": function (data, type, row, meta) { return '<button class="btn btn-danger" onclick="alert(' + row.id + ')">Sil</button>'; }
+                        "render": function (data, type, row, meta) { return '<button class="btn btn-danger confirm-delete" data-href="/Home/Delete?id=' + row.id + '">Sil</button>'; }
                     }
                 ]
 
-            });  
+            });
         });
     </script>
 }

@@ -9,6 +9,7 @@ namespace Moniturl.Core
             : base(x =>
                 (string.IsNullOrEmpty(targetSearchParams.Search) || x.Name.ToLower().Contains(targetSearchParams.Search)) &&
                 (!targetSearchParams.UserId.HasValue || x.UserId == targetSearchParams.UserId)
+            && x.Status
             )
         {
             AddInclude(x => x.User);
@@ -32,7 +33,7 @@ namespace Moniturl.Core
             }
         }
 
-        public TargetWithUserSpecification(int id) : base(x => x.Id == id)
+        public TargetWithUserSpecification(int id) : base(x => x.Id == id && x.Status)
         {
             AddInclude(x => x.User);
         }

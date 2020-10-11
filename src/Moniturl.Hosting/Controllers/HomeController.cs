@@ -86,5 +86,73 @@ namespace MonitUrl.Hosting.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Update(int id)
+        {
+            //TODO Check auth
+            var serviceResult =await _targetService.GetTargetAsync(id);
+
+            if (!serviceResult.Success)
+            {
+                foreach (var error in serviceResult.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+                return View(nameof(Index));
+            }
+
+            var targetUpdateViewModel = _mapper.Map<TargetUpdateViewModel>(serviceResult.Result);
+
+            return View(targetUpdateViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(TargetUpdateViewModel model)
+        {
+            //TODO Check auth
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var getTargetServiceResult = await _targetService.GetTargetAsync(model.Id);
+            var targetDto = getTargetServiceResult.Result;
+
+            _mapper.Map<TargetUpdateViewModel,TargetDto>(model, targetDto);
+
+            targetDto.UserId = UserId;
+            var serviceResult = await _targetService.UpdateAsync(targetDto);
+
+            if (!serviceResult.Success)
+            {
+                foreach (var error in serviceResult.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+                return View(model);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            //TODO Check auth
+            var serviceResult = await _targetService.DeleteAsync(id);
+
+            if (!serviceResult.Success)
+            {
+                foreach (var error in serviceResult.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+                return View(nameof(Index));
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

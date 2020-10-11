@@ -9,9 +9,10 @@ namespace Moniturl.Core
             : base(x =>
                 (string.IsNullOrEmpty(targetSearchParams.Search) || x.Name.ToLower().Contains(targetSearchParams.Search)) &&
                 (!targetSearchParams.UserId.HasValue || x.UserId == targetSearchParams.UserId)
+            && x.Status
             )
         {
-           
+
         }
     }
 }

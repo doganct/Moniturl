@@ -8,9 +8,9 @@ namespace Moniturl.Core
     public interface ITargetService
     {
         public Task<ServiceResult<Pagination<TargetDto>>> GetTargetsAsync(TargetSearchParams targetSearchParams);
-
+        public Task<ServiceResult<TargetDto>> GetTargetAsync(int id);
         public Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto);
         public Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto);
-        public Task<ServiceResult> Delete(int targetId);
+        public Task<ServiceResult> DeleteAsync(int targetId);
     }
 }
