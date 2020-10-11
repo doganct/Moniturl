@@ -5,6 +5,7 @@
     <PreserveCompilationReferences>true</PreserveCompilationReferences>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'MonitUrl.Hosting' " />
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8"></PackageReference>
