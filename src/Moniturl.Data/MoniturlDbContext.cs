@@ -13,5 +13,14 @@ namespace Moniturl.Data
         public DbSet<TargetLog> TargetLogs { get; set; }
         public DbSet<Mail> Mails { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Target>()
+                .Property(e => e.PassedMinutes)
+                .HasComputedColumnSql("DATEDIFF(MINUTE, LastRequestTime, GETDATE())");
+        }
+
     }
 }

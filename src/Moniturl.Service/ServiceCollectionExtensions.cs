@@ -21,10 +21,11 @@ namespace Moniturl.Service
 
             services.AddAutoMapper(typeof(MappingProfiles));
 
-
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ITargetService, TargetService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITargetLogService, TargetLogService>();
+            services.AddScoped<IMailService, MailService>();
 
         }
     }

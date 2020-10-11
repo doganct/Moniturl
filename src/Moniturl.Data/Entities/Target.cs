@@ -9,7 +9,8 @@ namespace Moniturl.Data
         public string Url { get; set; }
         public int Interval { get; set; }
         public int? UserId { get; set; }
-        public DateTime? LastRequestTime { get; set; }
+        public DateTime LastRequestTime { get; set; }
+        public int PassedMinutes { get; set; }
         public virtual User User { get; set; }
 
         public virtual ICollection<TargetLog> TargetLogs { get; set; }

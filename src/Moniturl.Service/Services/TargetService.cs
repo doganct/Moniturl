@@ -10,20 +10,30 @@ namespace Moniturl.Service
 {
     public class TargetService : ITargetService
     {
-        private readonly IGenericRepository<Target> _targerRepository;
+        private readonly IGenericRepository<Target> _targetRepository;
+        private readonly ITargetLogService _targetLogService;
+        private readonly IMailService _mailService;
         private readonly IMapper _mapper;
 
-        public TargetService(IGenericRepository<Target> targerRepository, IMapper mapper)
+        public TargetService(
+            IGenericRepository<Target> targetRepository,
+            ITargetLogService targetLogService, 
+            IMailService mailService
+            IMapper mapper)
         {
-            this._targerRepository = targerRepository;
+            this._targetRepository = targetRepository;
+            this._targetLogService = targetLogService;
+            this._mailService = mailService;
             this._mapper = mapper;
         }
 
         public async Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto)
         {
+            targetDto.LastRequestTime = DateTime.Now;
+
             var target = _mapper.Map<Target>(targetDto);
 
-            var addedTarget = await _targerRepository.AddAsync(target);
+            var addedTarget = await _targetRepository.AddAsync(target);
 
             return new ServiceResult<TargetDto>
             {
@@ -40,8 +50,28 @@ namespace Moniturl.Service
                 var url = target.Url;
                 var response = await url.GetAsync();
 
+                //save target log
+                await _targetLogService.AddAsync(new TargetLogDto
+                {
+                    StatusCode = response.StatusCode.ToString(),
+                    TargetId = target.Id
+                });
+
                 //update target
-                //if response another than 200, save mail table.
+                target.LastRequestTime = DateTime.Now;
+                await UpdateAsync(target);
+
+                //if response another than 200, save mail table to send.
+                if(!response.IsSuccessStatusCode)
+                {
+                    await _mailService.AddAsync(new MailDto
+                    {
+                        IsSend = false,
+                        Text = "TEST",
+                        Title = "Title Test",
+                        To = "dgncntpl@gmail.com"
+                    });
+                }
             }
 
 
@@ -50,14 +80,14 @@ namespace Moniturl.Service
 
         public async Task<ServiceResult> DeleteAsync(int targetId)
         {
-            await _targerRepository.Delete(targetId);
+            await _targetRepository.Delete(targetId);
 
             return new ServiceResult();
         }
 
         public async Task<ServiceResult<TargetDto>> GetTargetAsync(int id)
         {
-            var target = await _targerRepository.GetByIdAsync(id);
+            var target = await _targetRepository.GetByIdAsync(id);
 
             return new ServiceResult<TargetDto>
             {
@@ -71,9 +101,9 @@ namespace Moniturl.Service
 
             var countSpec = new TargetWithFiltersForCountSpecification(targetSearchParams);
 
-            var totalTargetCount = await _targerRepository.CountAsync(countSpec);
+            var totalTargetCount = await _targetRepository.CountAsync(countSpec);
 
-            var targets = await _targerRepository.GetAllBySpecAsync(spec);
+            var targets = await _targetRepository.GetAllBySpecAsync(spec);
 
             var data = _mapper.Map<IReadOnlyList<TargetDto>>(targets);
 
@@ -85,9 +115,9 @@ namespace Moniturl.Service
 
         public async Task<IReadOnlyList<TargetDto>> GetTargetsToRequest()
         {
-            var spec = new TargetToRequestSpecification(DateTime.Now);
+            var spec = new TargetToRequestSpecification();
 
-            var targets = await _targerRepository.GetAllBySpecAsync(spec);
+            var targets = await _targetRepository.GetAllBySpecAsync(spec);
 
             var data = _mapper.Map<IReadOnlyList<TargetDto>>(targets);
 
@@ -98,7 +128,7 @@ namespace Moniturl.Service
         {
             var target = _mapper.Map<Target>(targetDto);
 
-            var updatedTarget = await _targerRepository.UpdateAsync(target);
+            var updatedTarget = await _targetRepository.UpdateAsync(target);
 
             return new ServiceResult<TargetDto>
             {

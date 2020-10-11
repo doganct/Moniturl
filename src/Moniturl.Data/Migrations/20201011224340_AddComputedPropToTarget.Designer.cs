@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Moniturl.Data;
 
 namespace Moniturl.Data.Migrations
 {
     [DbContext(typeof(MoniturlDbContext))]
-    partial class MoniturlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201011224340_AddComputedPropToTarget")]
+    partial class AddComputedPropToTarget
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
