@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,15 @@ namespace MonitUrl.Hosting
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSeviceExtensions(Configuration);
+
+            var connectionString = Configuration["DbSettings:ConnectionString"];
+
+            services.AddHangfire(x =>
+            {
+                x.UseSqlServerStorage(connectionString);
+            });
+
+            services.AddHangfireServer();
 
             services.AddCookieAuthentication();
 
@@ -52,6 +63,11 @@ namespace MonitUrl.Hosting
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new AuthorizationFilter() }
+            });
 
             app.UseEndpoints(endpoints =>
             {

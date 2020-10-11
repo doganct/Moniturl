@@ -154,5 +154,13 @@ namespace MonitUrl.Hosting.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        public IActionResult Test()
+        {
+            _targetService.CheckTargetResponses();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

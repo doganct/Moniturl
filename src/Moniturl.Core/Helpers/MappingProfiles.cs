@@ -10,6 +10,8 @@ namespace Moniturl.Core
             CreateMap<Target, TargetDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<RegisterDto, User>();
+            CreateMap<TargetLog, TargetLogDto>().ReverseMap();
+            CreateMap<MailDto, Mail>().ReverseMap();
         }
     }
 }

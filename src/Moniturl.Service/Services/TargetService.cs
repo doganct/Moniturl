@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Flurl.Http;
 using Moniturl.Core;
 using Moniturl.Data;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -27,6 +29,23 @@ namespace Moniturl.Service
             {
                 Result = _mapper.Map<TargetDto>(addedTarget)
             };
+        }
+
+        public async Task<ServiceResult> CheckTargetResponses()
+        {
+            var targets = await GetTargetsToRequest();
+
+            foreach (var target in targets)
+            {
+                var url = target.Url;
+                var response = await url.GetAsync();
+
+                //update target
+                //if response another than 200, save mail table.
+            }
+
+
+            return new ServiceResult();
         }
 
         public async Task<ServiceResult> DeleteAsync(int targetId)
@@ -62,6 +81,17 @@ namespace Moniturl.Service
             {
                 Result = new Pagination<TargetDto>(targetSearchParams.PageIndex, targetSearchParams.PageSize, totalTargetCount, data)
             };
+        }
+
+        public async Task<IReadOnlyList<TargetDto>> GetTargetsToRequest()
+        {
+            var spec = new TargetToRequestSpecification(DateTime.Now);
+
+            var targets = await _targerRepository.GetAllBySpecAsync(spec);
+
+            var data = _mapper.Map<IReadOnlyList<TargetDto>>(targets);
+
+            return data;
         }
 
         public async Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto)

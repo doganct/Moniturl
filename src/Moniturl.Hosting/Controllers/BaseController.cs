@@ -6,7 +6,7 @@ using System.Security.Claims;
 namespace Moniturl.Hosting.Controllers
 {
     [Authorize]
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {
         public int UserId
         {

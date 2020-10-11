@@ -12,5 +12,7 @@ namespace Moniturl.Core
         public Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto);
         public Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto);
         public Task<ServiceResult> DeleteAsync(int targetId);
+        public Task<IReadOnlyList<TargetDto>> GetTargetsToRequest();
+        public Task<ServiceResult> CheckTargetResponses();
     }
 }

@@ -10,6 +10,8 @@ namespace Moniturl.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Target> Targets { get; set; }
+        public DbSet<TargetLog> TargetLogs { get; set; }
+        public DbSet<Mail> Mails { get; set; }
 
     }
 }

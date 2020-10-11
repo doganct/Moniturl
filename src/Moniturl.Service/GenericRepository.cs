@@ -54,12 +54,20 @@ namespace Moniturl.Service
 
         public async Task<IReadOnlyList<T>> GetAllBySpecAsync(ISpecification<T> spec)
         {
-            return await ApplySpecification(spec).AsNoTracking().ToListAsync();
+            try
+            {
+                return await ApplySpecification(spec).AsNoTracking().ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x=> x.Id == id);
+            return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<T> GetBySpecAsync(ISpecification<T> spec)
@@ -72,7 +80,7 @@ namespace Moniturl.Service
             await Task.CompletedTask;
             model.UpdatedDate = DateTime.Now;
 
-            var returnModel =  _context.Set<T>().Update(model);
+            var returnModel = _context.Set<T>().Update(model);
 
             await _context.SaveChangesAsync();
 
