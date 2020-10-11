@@ -18,6 +18,18 @@ namespace Moniturl.Service
             _context = context;
         }
 
+        public async Task<T> AddAsync(T model)
+        {
+            model.Status = true;
+            model.CreatedDate = DateTime.Now;
+
+            var returnModel = await _context.Set<T>().AddAsync(model);
+
+            await _context.SaveChangesAsync();
+
+            return returnModel.Entity;
+        }
+
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).CountAsync();
@@ -41,6 +53,18 @@ namespace Moniturl.Service
         public async Task<T> GetBySpecAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).FirstOrDefaultAsync();
+        }
+
+        public async Task<T> UpdateAsync(T model)
+        {
+            await Task.CompletedTask;
+            model.UpdatedDate = DateTime.Now;
+
+            var returnModel =  _context.Set<T>().Update(model);
+
+            await _context.SaveChangesAsync();
+
+            return returnModel.Entity;
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)

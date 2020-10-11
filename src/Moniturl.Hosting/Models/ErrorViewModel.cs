@@ -1,6 +1,6 @@
 using System;
 
-namespace MonitUrl.Hosting.Models
+namespace Moniturl.Hosting
 {
     public class ErrorViewModel
     {

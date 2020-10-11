@@ -11,5 +11,7 @@ namespace Moniturl.Core
         Task<T> GetBySpecAsync(ISpecification<T> spec);
         Task<IReadOnlyList<T>> GetAllBySpecAsync(ISpecification<T> spec);
         Task<int> CountAsync(ISpecification<T> spec);
+        Task<T> AddAsync(T model);
+        Task<T> UpdateAsync(T model);
     }
 }

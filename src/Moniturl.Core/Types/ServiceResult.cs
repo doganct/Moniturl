@@ -6,15 +6,18 @@ using System.Text;
 
 namespace Moniturl.Core
 {
-    public class ServiceResult<T>
+    public class ServiceResult<T> : ServiceResult
+    {
+        public T Result { get; set; }
+    }
+
+    public class ServiceResult
     {
         public ServiceResult()
         {
             ErrorMessages = new Dictionary<string, string>();
         }
-
-        public T Result { get; set; }
-        public Dictionary<string,string> ErrorMessages { get; set; }
+        public Dictionary<string, string> ErrorMessages { get; set; }
         public bool Success
         {
             get

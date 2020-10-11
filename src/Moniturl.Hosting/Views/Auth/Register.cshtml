@@ -1,0 +1,39 @@
+﻿@model RegisterViewModel
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Üye Ol | Moniturl</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Custom styles for this template -->
+    <link href="~/css/register.css" rel="stylesheet">
+</head>
+<body class="text-center">
+    <form action="@Url.Action("Register","Auth")" method="post" class="form-signin">
+        <h1 class="h1 mb-3 font-weight-normal">Moniturl</h1>
+        <h3 class="h3 mb-3 font-weight-normal">Lütfen giriş yapın</h3>
+        @Html.LabelFor(x => x.Email, new { @class = "sr-only" })
+        @Html.TextBoxFor(x => x.Email, new { @class = "form-control", @placeholder = "Email adresi", @required = "required", @autofocus = "autofocus" })
+        @Html.ValidationMessageFor(x => x.Email)
+        @Html.LabelFor(x => x.Name, new { @class = "sr-only" })
+        @Html.TextBoxFor(x => x.Name, new { @class = "form-control", @placeholder = "Ad", @required = "required" })
+        @Html.ValidationMessageFor(x => x.Name)
+        @Html.LabelFor(x => x.Surname, new { @class = "sr-only" })
+        @Html.TextBoxFor(x => x.Surname, new { @class = "form-control", @placeholder = "Soyad", @required = "required" })
+        @Html.ValidationMessageFor(x => x.Surname)
+        @Html.LabelFor(x => x.Password, new { @class = "sr-only" })
+        @Html.PasswordFor(x => x.Password, new { @class = "form-control", @placeholder = "Şifre", @required = "required" })
+        @Html.ValidationMessageFor(x => x.Password)
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Kaydet</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2020</p>
+    </form>
+</body>
+</html>

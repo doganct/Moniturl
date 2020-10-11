@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Moniturl.Hosting;
 using Moniturl.Service;
 
 namespace MonitUrl.Hosting
@@ -25,6 +27,10 @@ namespace MonitUrl.Hosting
         {
             services.AddSeviceExtensions(Configuration);
 
+            services.AddCookieAuthentication();
+
+            services.AddAutoMapper(typeof(MappingProfiles));
+
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 
@@ -42,6 +48,8 @@ namespace MonitUrl.Hosting
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

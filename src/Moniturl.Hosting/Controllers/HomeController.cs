@@ -5,33 +5,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MonitUrl.Hosting.Models;
+using Moniturl.Core;
+using Moniturl.Hosting;
+using Moniturl.Hosting.Controllers;
 
 namespace MonitUrl.Hosting.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ITargetService _targetService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ITargetService targetService)
         {
-            _logger = logger;
+            this._targetService = targetService;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(TargetSearchParams targetSearchParams)
         {
-            return View();
-        }
+            var data = await _targetService.GetTargetsAsync(targetSearchParams);
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(data.Result);
         }
     }
 }
