@@ -17,6 +17,25 @@ namespace Moniturl.Service
             this._mapper = mapper;
         }
 
+        public async Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto)
+        {
+            var target = _mapper.Map<Target>(targetDto);
+
+            var addedTarget = await _targerRepository.AddAsync(target);
+
+            return new ServiceResult<TargetDto>
+            {
+                Result = _mapper.Map<TargetDto>(addedTarget)
+            };
+        }
+
+        public async Task<ServiceResult> Delete(int targetId)
+        {
+            await _targerRepository.Delete(targetId);
+
+            return new ServiceResult();
+        }
+
         public async Task<ServiceResult<Pagination<TargetDto>>> GetTargetsAsync(TargetSearchParams targetSearchParams)
         {
             var spec = new TargetWithUserSpecification(targetSearchParams);
@@ -27,12 +46,17 @@ namespace Moniturl.Service
 
             var targets = await _targerRepository.GetAllBySpecAsync(spec);
 
-            var data = _mapper.Map<IReadOnlyList<Target>, IReadOnlyList<TargetDto>>(targets);
+            var data = _mapper.Map<IReadOnlyList<TargetDto>>(targets);
 
             return new ServiceResult<Pagination<TargetDto>>
             {
                 Result = new Pagination<TargetDto>(targetSearchParams.PageIndex, targetSearchParams.PageSize, totalTargetCount, data)
             };
+        }
+
+        public Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

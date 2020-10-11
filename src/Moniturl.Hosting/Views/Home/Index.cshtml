@@ -1,13 +1,67 @@
-﻿@model Pagination<TargetDto>
-
-@{
-    ViewData["Title"] = "Home Page";
+﻿@{
+    ViewData["Title"] = "Hedefler";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    @foreach (var target in Model.Data)
-    {
-        <p>@target.Name</p>
-    }
+@section Css
+{
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="target-table" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">@Messages.Name</th>
+                    <th scope="col">@Messages.Url</th>
+                    <th scope="col">@Messages.Interval</th>
+                    <th scope="col">@Messages.Edit</th>
+                    <th scope="col">@Messages.Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+@section Scripts{
+    <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#target-table').DataTable({
+                "processing": true,   
+                "serverSide": true, 
+                "filter": true,    
+                "orderMulti": false,    
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json"
+                },
+                "ajax": {
+                    "url": "/Home/GetTargets",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "columnDefs": [{
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }],
+                "columns": [
+                    { "data": "id", "name": "id", "autoWidth": true },
+                    { "data": "name", "name": "name", "autoWidth": true },
+                    { "data": "url", "name": "url", "autoWidth": true },
+                    { "data": "interval", "name": "interval", "autoWidth": true },
+                    {
+                        "render": function (data, type, row, meta) { return '<a class="btn btn-warning" href="/Home/Update/' + row.id + '">Düzenle</a>'; }
+                    },
+                    {
+                        "render": function (data, type, row, meta) { return '<button class="btn btn-danger" onclick="alert(' + row.id + ')">Sil</button>'; }
+                    }
+                ]
+
+            });  
+        });
+    </script>
+}

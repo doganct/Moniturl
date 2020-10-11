@@ -9,6 +9,8 @@ namespace Moniturl.Hosting
         {
             CreateMap<RegisterDto, RegisterViewModel>().ReverseMap();
             CreateMap<LoginDto, LoginViewModel>().ReverseMap();
+            CreateMap<TargetDto, TargetCreateViewModel>().ReverseMap();
+            CreateMap<TargetDto, TargetUpdateViewModel>().ReverseMap();
         }
     }
 }

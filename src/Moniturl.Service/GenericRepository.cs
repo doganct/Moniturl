@@ -35,6 +35,14 @@ namespace Moniturl.Service
             return await ApplySpecification(spec).CountAsync();
         }
 
+        public async Task Delete(int id)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            _context.Set<T>().Remove(entity);
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();

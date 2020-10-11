@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Moniturl.Core
 {
-    public interface IGenericRepository<T> where T: BaseEntity
+    public interface IGenericRepository<T> where T : BaseEntity
     {
         Task<T> GetByIdAsync(int id);
         Task<IReadOnlyList<T>> GetAllAsync();
@@ -13,5 +13,6 @@ namespace Moniturl.Core
         Task<int> CountAsync(ISpecification<T> spec);
         Task<T> AddAsync(T model);
         Task<T> UpdateAsync(T model);
+        Task Delete(int id);
     }
 }

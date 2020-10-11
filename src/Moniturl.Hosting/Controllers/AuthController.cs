@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Internal;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +39,10 @@ namespace Moniturl.Hosting.Controllers
 
             if (!serviceResult.Success)
             {
-                serviceResult.ErrorMessages.ForAll(error => ModelState.AddModelError(error.Key, error.Value));
+                foreach (var error in serviceResult.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
                 return View(model);
             }
 
@@ -65,11 +67,14 @@ namespace Moniturl.Hosting.Controllers
             }
 
             var registerDto = _mapper.Map<RegisterDto>(model);
-            var result = await _userService.RegisterAsync(registerDto);
+            var serviceResult = await _userService.RegisterAsync(registerDto);
 
-            if (!result.Success)
+            if (!serviceResult.Success)
             {
-                result.ErrorMessages.ForAll(error => ModelState.AddModelError(error.Key, error.Value));
+                foreach (var error in serviceResult.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
                 return View(model);
             }
 
