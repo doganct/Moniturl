@@ -4,7 +4,8 @@ namespace Moniturl.Core
 {
     public interface IMailService
     {
-        public Task<ServiceResult<MailDto>> AddAsync(MailDto targetDto);
+        Task<ServiceResult<MailDto>> AddAsync(MailDto targetDto);
+        Task SendMailAsync(string to, string subject, string body);
 
     }
 }

@@ -86,6 +86,7 @@ namespace MonitUrl.Hosting.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
@@ -155,11 +156,16 @@ namespace MonitUrl.Hosting.Controllers
         }
 
 
-        public IActionResult Test()
+        public async  Task<IActionResult> Test()
         {
-            _targetService.CheckTargetResponses();
+           await _targetService.CheckTargetResponses(UserEmail);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool CheckInterval(int interval)
+        {
+            return interval > 1;
         }
 
     }

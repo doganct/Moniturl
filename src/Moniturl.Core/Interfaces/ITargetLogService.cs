@@ -7,6 +7,6 @@ namespace Moniturl.Core
 {
     public interface ITargetLogService
     {
-        public Task<ServiceResult<TargetLogDto>> AddAsync(TargetLogDto targetDto);
+        Task<ServiceResult<TargetLogDto>> AddAsync(TargetLogDto targetDto);
     }
 }

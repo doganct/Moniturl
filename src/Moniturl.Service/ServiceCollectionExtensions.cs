@@ -21,6 +21,8 @@ namespace Moniturl.Service
 
             services.AddAutoMapper(typeof(MappingProfiles));
 
+            services.Configure<SmtpSettings>(configuration.GetSection(nameof(SmtpSettings)));
+
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ITargetService, TargetService>();
             services.AddScoped<IUserService, UserService>();

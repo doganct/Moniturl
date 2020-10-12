@@ -11,11 +11,11 @@ namespace Moniturl.Service
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        private readonly MoniturlDbContext _context;
+        private readonly MoniturlDbContext _moniturlDbContext;
 
         public GenericRepository(MoniturlDbContext context)
         {
-            _context = context;
+            _moniturlDbContext = context;
         }
 
         public async Task<T> AddAsync(T model)
@@ -23,9 +23,9 @@ namespace Moniturl.Service
             model.Status = true;
             model.CreatedDate = DateTime.Now;
 
-            var returnModel = await _context.Set<T>().AddAsync(model);
+            var returnModel = await _moniturlDbContext.Set<T>().AddAsync(model);
 
-            await _context.SaveChangesAsync();
+            await _moniturlDbContext.SaveChangesAsync();
 
             return returnModel.Entity;
         }
@@ -37,37 +37,29 @@ namespace Moniturl.Service
 
         public async Task Delete(int id)
         {
-            var entity = await _context.Set<T>().FindAsync(id);
+            var entity = await _moniturlDbContext.Set<T>().FindAsync(id);
 
             entity.Status = false;
             entity.UpdatedDate = DateTime.Now;
 
-            _context.Set<T>().Update(entity);
+            _moniturlDbContext.Set<T>().Update(entity);
 
-            await _context.SaveChangesAsync();
+            await _moniturlDbContext.SaveChangesAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
+            return await _moniturlDbContext.Set<T>().AsNoTracking().ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllBySpecAsync(ISpecification<T> spec)
         {
-            try
-            {
-                return await ApplySpecification(spec).AsNoTracking().ToListAsync();
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return await ApplySpecification(spec).AsNoTracking().ToListAsync();
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return await _moniturlDbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<T> GetBySpecAsync(ISpecification<T> spec)
@@ -80,16 +72,16 @@ namespace Moniturl.Service
             await Task.CompletedTask;
             model.UpdatedDate = DateTime.Now;
 
-            var returnModel = _context.Set<T>().Update(model);
+            var returnModel = _moniturlDbContext.Set<T>().Update(model);
 
-            await _context.SaveChangesAsync();
+            await _moniturlDbContext.SaveChangesAsync();
 
             return returnModel.Entity;
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
-            return SpecificationEvaluator<T>.GetQueryable(_context.Set<T>().AsQueryable(), spec);
+            return SpecificationEvaluator<T>.GetQueryable(_moniturlDbContext.Set<T>().AsQueryable(), spec);
         }
     }
 }

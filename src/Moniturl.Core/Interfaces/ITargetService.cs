@@ -7,12 +7,12 @@ namespace Moniturl.Core
 {
     public interface ITargetService
     {
-        public Task<ServiceResult<Pagination<TargetDto>>> GetTargetsAsync(TargetSearchParams targetSearchParams);
-        public Task<ServiceResult<TargetDto>> GetTargetAsync(int id);
-        public Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto);
-        public Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto);
-        public Task<ServiceResult> DeleteAsync(int targetId);
-        public Task<IReadOnlyList<TargetDto>> GetTargetsToRequest();
-        public Task<ServiceResult> CheckTargetResponses();
+        Task<ServiceResult<Pagination<TargetDto>>> GetTargetsAsync(TargetSearchParams targetSearchParams);
+        Task<ServiceResult<TargetDto>> GetTargetAsync(int id);
+        Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto);
+        Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto);
+        Task<ServiceResult> DeleteAsync(int targetId);
+        Task<IReadOnlyList<TargetDto>> GetTargetsToRequest();
+        Task<ServiceResult> CheckTargetResponses(string emailAddress);
     }
 }

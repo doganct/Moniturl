@@ -5,7 +5,7 @@ namespace Moniturl.Core
 {
     public interface IUserService
     {
-        public Task<ServiceResult> RegisterAsync(RegisterDto registerDto);
-        public Task<ServiceResult<UserDto>> LoginAsync(LoginDto loginDto);
+        Task<ServiceResult> RegisterAsync(RegisterDto registerDto);
+        Task<ServiceResult<UserDto>> LoginAsync(LoginDto loginDto);
     }
 }

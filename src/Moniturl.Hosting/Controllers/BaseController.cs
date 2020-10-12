@@ -16,5 +16,14 @@ namespace Moniturl.Hosting.Controllers
                 return Convert.ToInt32(id);
             }
         }
+
+        public string UserEmail
+        {
+            get
+            {
+                var email = User.FindFirst(ClaimTypes.Email)?.Value;
+                return email;
+            }
+        }
     }
 }

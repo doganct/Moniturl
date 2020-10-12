@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Flurl.Http;
 using Moniturl.Core;
 using Moniturl.Data;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Moniturl.Service
@@ -18,7 +18,7 @@ namespace Moniturl.Service
         public TargetService(
             IGenericRepository<Target> targetRepository,
             ITargetLogService targetLogService, 
-            IMailService mailService
+            IMailService mailService,
             IMapper mapper)
         {
             this._targetRepository = targetRepository;
@@ -41,19 +41,21 @@ namespace Moniturl.Service
             };
         }
 
-        public async Task<ServiceResult> CheckTargetResponses()
+        public async Task<ServiceResult> CheckTargetResponses(string emailAddress)
         {
             var targets = await GetTargetsToRequest();
+
+            var httpClient = new HttpClient();
 
             foreach (var target in targets)
             {
                 var url = target.Url;
-                var response = await url.GetAsync();
+                var response = await httpClient.GetAsync(url);
 
                 //save target log
                 await _targetLogService.AddAsync(new TargetLogDto
                 {
-                    StatusCode = response.StatusCode.ToString(),
+                    StatusCode = ((int)response.StatusCode).ToString(),
                     TargetId = target.Id
                 });
 
@@ -64,16 +66,10 @@ namespace Moniturl.Service
                 //if response another than 200, save mail table to send.
                 if(!response.IsSuccessStatusCode)
                 {
-                    await _mailService.AddAsync(new MailDto
-                    {
-                        IsSend = false,
-                        Text = "TEST",
-                        Title = "Title Test",
-                        To = "dgncntpl@gmail.com"
-                    });
+                    var mailBody = Messages.TargetMailBody(target.Name, target.Url, target.Interval, DateTime.Now);
+                    await _mailService.SendMailAsync(emailAddress, Messages.TargetMailSubject, mailBody);
                 }
             }
-
 
             return new ServiceResult();
         }
