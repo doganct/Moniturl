@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Hangfire;
-using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,10 +38,11 @@ namespace MonitUrl.Hosting
             services.AddAutoMapper(typeof(MappingProfiles));
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceScopeFactory serviceScopeFactory)
         {
             if (env.IsDevelopment())
             {
@@ -68,6 +64,14 @@ namespace MonitUrl.Hosting
             {
                 Authorization = new[] { new AuthorizationFilter() }
             });
+
+            using (var scope = serviceScopeFactory.CreateScope())
+            {
+                var provider = scope.ServiceProvider;
+                var _targetService = provider.GetRequiredService<Moniturl.Core.ITargetService>();
+                RecurringJob.AddOrUpdate(() => _targetService.CheckTargetResponses(), Cron.Minutely);
+            }
+
 
             app.UseEndpoints(endpoints =>
             {

@@ -158,7 +158,7 @@ namespace MonitUrl.Hosting.Controllers
 
         public async  Task<IActionResult> Test()
         {
-           await _targetService.CheckTargetResponses(UserEmail);
+           await _targetService.CheckTargetResponses();
 
             return RedirectToAction(nameof(Index));
         }

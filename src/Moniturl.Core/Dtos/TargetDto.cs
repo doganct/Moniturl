@@ -11,5 +11,7 @@ namespace Moniturl.Core
         public int Interval { get; set; }
         public int? UserId { get; set; }
         public DateTime LastRequestTime { get; set; }
+
+        public string UserEmail { get; set; }
     }
 }

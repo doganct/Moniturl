@@ -13,6 +13,6 @@ namespace Moniturl.Core
         Task<ServiceResult<TargetDto>> UpdateAsync(TargetDto targetDto);
         Task<ServiceResult> DeleteAsync(int targetId);
         Task<IReadOnlyList<TargetDto>> GetTargetsToRequest();
-        Task<ServiceResult> CheckTargetResponses(string emailAddress);
+        Task<ServiceResult> CheckTargetResponses();
     }
 }

@@ -8,7 +8,7 @@ namespace Moniturl.Core
         public TargetToRequestSpecification()
             : base(x => x.PassedMinutes >= x.Interval)
         {
-
+            AddInclude(x => x.User);
         }
     }
 }

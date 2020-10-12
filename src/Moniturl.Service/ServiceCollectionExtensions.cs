@@ -29,6 +29,7 @@ namespace Moniturl.Service
             services.AddScoped<ITargetLogService, TargetLogService>();
             services.AddScoped<IMailService, MailService>();
 
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using Moniturl.Core;
 using Moniturl.Data;
 using System;
@@ -17,7 +18,7 @@ namespace Moniturl.Service
 
         public TargetService(
             IGenericRepository<Target> targetRepository,
-            ITargetLogService targetLogService, 
+            ITargetLogService targetLogService,
             IMailService mailService,
             IMapper mapper)
         {
@@ -41,7 +42,7 @@ namespace Moniturl.Service
             };
         }
 
-        public async Task<ServiceResult> CheckTargetResponses(string emailAddress)
+        public async Task<ServiceResult> CheckTargetResponses()
         {
             var targets = await GetTargetsToRequest();
 
@@ -63,11 +64,10 @@ namespace Moniturl.Service
                 target.LastRequestTime = DateTime.Now;
                 await UpdateAsync(target);
 
-                //if response another than 200, save mail table to send.
-                if(!response.IsSuccessStatusCode)
+                //if response another than 200, send mail or notification...
+                if (!response.IsSuccessStatusCode)
                 {
-                    var mailBody = Messages.TargetMailBody(target.Name, target.Url, target.Interval, DateTime.Now);
-                    await _mailService.SendMailAsync(emailAddress, Messages.TargetMailSubject, mailBody);
+                    BackgroundJob.Enqueue(() => _mailService.SendTargetIsDownMailAsync(target));
                 }
             }
 
