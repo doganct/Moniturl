@@ -42,6 +42,19 @@ namespace Moniturl.Service
             };
         }
 
+        public async Task<ServiceResult> CheckAuthorization(int targetId, int userId)
+        {
+            var result = new ServiceResult();
+
+            var target = await _targetRepository.GetByIdAsync(targetId);
+            if(target.UserId != userId)
+            {
+                result.ErrorMessages.Add(string.Empty, Messages.Forbidden);
+            }
+
+            return result;
+        }
+
         public async Task<ServiceResult> CheckTargetResponses()
         {
             var targets = await GetTargetsToRequest();
@@ -105,7 +118,7 @@ namespace Moniturl.Service
 
             return new ServiceResult<Pagination<TargetDto>>
             {
-                Result = new Pagination<TargetDto>(targetSearchParams.PageIndex, targetSearchParams.PageSize, totalTargetCount, data)
+                Result = new Pagination<TargetDto>(targetSearchParams.Skip, targetSearchParams.Take, totalTargetCount, data)
             };
         }
 

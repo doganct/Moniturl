@@ -16,7 +16,7 @@ namespace Moniturl.Core
 
             AddOrderBy(x => x.Name);
 
-            ApplyPaging(targetSearchParams.PageSize * (targetSearchParams.PageIndex - 1), targetSearchParams.PageSize);
+            ApplyPaging(targetSearchParams.Skip, targetSearchParams.Take);
 
             if (!string.IsNullOrEmpty(targetSearchParams.Sort))
             {

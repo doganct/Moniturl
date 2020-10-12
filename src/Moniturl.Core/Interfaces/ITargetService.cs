@@ -7,6 +7,7 @@ namespace Moniturl.Core
 {
     public interface ITargetService
     {
+        Task<ServiceResult> CheckAuthorization(int targetId, int userId);
         Task<ServiceResult<Pagination<TargetDto>>> GetTargetsAsync(TargetSearchParams targetSearchParams);
         Task<ServiceResult<TargetDto>> GetTargetAsync(int id);
         Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto);

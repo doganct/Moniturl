@@ -6,6 +6,7 @@ namespace Moniturl.Core
 {
     public class Messages
     {
+        public const string Forbidden = "Bu işlem için yetkiniz bulunmamaktadır.";
         public const string ThisEmailAddressIsNotAvailable = "Bu email adresi kullanılmaktadır.";
         public const string CheckYourEmailAddressOrPassword = "Email adresinizi veya şifrenizi kontrol ediniz.";
         public const string PleaseEnterEmailAddressCorrectFormat = "Lütfen uygun formatta bir email giriniz.";

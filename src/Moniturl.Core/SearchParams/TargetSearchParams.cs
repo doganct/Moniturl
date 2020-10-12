@@ -2,14 +2,15 @@
 {
     public class TargetSearchParams
     {
-        private const int MaxPageSize = 50;
+        private const int MaxTake = 50;
 
-        public int PageIndex { get; set; } = 1;
-        private int _pageSize = 6;
-        public int PageSize
+        public int Skip { get; set; } = 0;
+
+        private int _take = 3;
+        public int Take
         {
-            get => _pageSize;
-            set => _pageSize = (value == MaxPageSize) ? MaxPageSize : value;
+            get => _take;
+            set => _take = (value >= MaxTake) ? MaxTake : value;
         }
 
         public int? UserId { get; set; }

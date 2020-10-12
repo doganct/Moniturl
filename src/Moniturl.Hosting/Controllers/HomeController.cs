@@ -30,27 +30,20 @@ namespace MonitUrl.Hosting.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetTargets()
+        public async Task<IActionResult> GetTargets(JqueryDatatableQueryModel model)
         {
-            var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
-            var skip = Request.Form["start"].FirstOrDefault();
-            var take = Request.Form["length"].FirstOrDefault();
-            var searchValue = Request.Form["search[value]"].FirstOrDefault();
-            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-            var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-
             var data = await _targetService.GetTargetsAsync(new TargetSearchParams
             {
-                Search = searchValue,
-                PageSize = Convert.ToInt32(take),
-                PageIndex = 1,
+                Search = model.Search.Value ?? "",
+                Take = Convert.ToInt32(model.Length),
+                Skip = Convert.ToInt32(model.Start),
                 UserId = UserId
             });
 
             return Json(new
             {
-                draw = draw,
-                recordsFiltered = data.Result.Data.Count,
+                draw = model.Draw,
+                recordsFiltered = data.Result.Count,
                 recordsTotal = data.Result.Count,
                 data = data.Result.Data
             });
@@ -76,10 +69,7 @@ namespace MonitUrl.Hosting.Controllers
 
             if (!serviceResult.Success)
             {
-                foreach (var error in serviceResult.ErrorMessages)
-                {
-                    ModelState.AddModelError(error.Key, error.Value);
-                }
+                AddModelErrors(serviceResult);
                 return View(model);
             }
 
@@ -90,15 +80,19 @@ namespace MonitUrl.Hosting.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
-            //TODO Check auth
+            var isAuthResult = await _targetService.CheckAuthorization(id, UserId);
+            if (!isAuthResult.Success)
+            {
+                AddModelErrors(isAuthResult);
+                return View(nameof(Index));
+            }
+
+
             var serviceResult =await _targetService.GetTargetAsync(id);
 
             if (!serviceResult.Success)
             {
-                foreach (var error in serviceResult.ErrorMessages)
-                {
-                    ModelState.AddModelError(error.Key, error.Value);
-                }
+                AddModelErrors(serviceResult);
                 return View(nameof(Index));
             }
 
@@ -110,7 +104,12 @@ namespace MonitUrl.Hosting.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(TargetUpdateViewModel model)
         {
-            //TODO Check auth
+            var isAuthResult =await _targetService.CheckAuthorization(model.Id, UserId);
+            if(!isAuthResult.Success)
+            {
+                AddModelErrors(isAuthResult);
+                return View(model);
+            }
 
             if (!ModelState.IsValid)
             {
@@ -127,10 +126,7 @@ namespace MonitUrl.Hosting.Controllers
 
             if (!serviceResult.Success)
             {
-                foreach (var error in serviceResult.ErrorMessages)
-                {
-                    ModelState.AddModelError(error.Key, error.Value);
-                }
+                AddModelErrors(serviceResult);
                 return View(model);
             }
 
@@ -140,25 +136,21 @@ namespace MonitUrl.Hosting.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            //TODO Check auth
+            var isAuthResult = await _targetService.CheckAuthorization(id, UserId);
+            if (!isAuthResult.Success)
+            {
+                AddModelErrors(isAuthResult);
+                return View(nameof(Index));
+            }
+
+
             var serviceResult = await _targetService.DeleteAsync(id);
 
             if (!serviceResult.Success)
             {
-                foreach (var error in serviceResult.ErrorMessages)
-                {
-                    ModelState.AddModelError(error.Key, error.Value);
-                }
+                AddModelErrors(serviceResult);
                 return View(nameof(Index));
             }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-
-        public async  Task<IActionResult> Test()
-        {
-           await _targetService.CheckTargetResponses();
 
             return RedirectToAction(nameof(Index));
         }
@@ -166,6 +158,14 @@ namespace MonitUrl.Hosting.Controllers
         private bool CheckInterval(int interval)
         {
             return interval > 1;
+        }
+
+        private void AddModelErrors(ServiceResult serviceResult)
+        {
+            foreach (var error in serviceResult.ErrorMessages)
+            {
+                ModelState.AddModelError(error.Key, error.Value);
+            }
         }
 
     }
