@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Moniturl.Hosting;
 using Moniturl.Service;
+using Serilog;
 
 namespace MonitUrl.Hosting
 {
@@ -54,16 +55,15 @@ namespace MonitUrl.Hosting
             }
             app.UseStaticFiles();
 
+            app.UseSerilogRequestLogging();
+
             app.UseRouting();
 
             app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            {
-                Authorization = new[] { new AuthorizationFilter() }
-            });
+            app.UseHangfireDashboard("/hangfire");
 
             using (var scope = serviceScopeFactory.CreateScope())
             {

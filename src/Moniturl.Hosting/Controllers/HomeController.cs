@@ -88,7 +88,7 @@ namespace MonitUrl.Hosting.Controllers
             }
 
 
-            var serviceResult =await _targetService.GetTargetAsync(id);
+            var serviceResult = await _targetService.GetTargetAsync(id);
 
             if (!serviceResult.Success)
             {
@@ -104,8 +104,8 @@ namespace MonitUrl.Hosting.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(TargetUpdateViewModel model)
         {
-            var isAuthResult =await _targetService.CheckAuthorization(model.Id, UserId);
-            if(!isAuthResult.Success)
+            var isAuthResult = await _targetService.CheckAuthorization(model.Id, UserId);
+            if (!isAuthResult.Success)
             {
                 AddModelErrors(isAuthResult);
                 return View(model);
@@ -119,7 +119,7 @@ namespace MonitUrl.Hosting.Controllers
             var getTargetServiceResult = await _targetService.GetTargetAsync(model.Id);
             var targetDto = getTargetServiceResult.Result;
 
-            _mapper.Map<TargetUpdateViewModel,TargetDto>(model, targetDto);
+            _mapper.Map<TargetUpdateViewModel, TargetDto>(model, targetDto);
 
             targetDto.UserId = UserId;
             var serviceResult = await _targetService.UpdateAsync(targetDto);

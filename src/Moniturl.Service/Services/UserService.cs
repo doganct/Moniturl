@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Moniturl.Core;
 using Moniturl.Data;
 using System;
@@ -12,9 +13,11 @@ namespace Moniturl.Service
     {
         private readonly IGenericRepository<User> _userRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IGenericRepository<User> userRepository, IMapper mapper)
+        public UserService(IGenericRepository<User> userRepository, IMapper mapper, ILogger<UserService> logger)
         {
+            this._logger = logger;
             this._userRepository = userRepository;
             this._mapper = mapper;
         }
@@ -40,8 +43,8 @@ namespace Moniturl.Service
             user.PasswordSalt = passwordSalt;
             user.RoleId = Role.User.GetHashCode();
 
-            await _userRepository.AddAsync(user);
-
+            var registeredUser = await _userRepository.AddAsync(user);
+            _logger.LogInformation("Registered new user with id: {0} at {1}", registeredUser.Id, DateTime.Now);
             return new ServiceResult();
         }
 
@@ -89,7 +92,7 @@ namespace Moniturl.Service
 
             var user = await _userRepository.GetBySpecAsync(userSpecification);
 
-            if(user == null)
+            if (user == null)
             {
                 var result = new ServiceResult<UserDto>();
                 result.ErrorMessages.Add(string.Empty, Messages.CheckYourEmailAddressOrPassword);
@@ -104,6 +107,8 @@ namespace Moniturl.Service
             }
 
             var userDto = _mapper.Map<UserDto>(user);
+            _logger.LogInformation("User was logged in with id: {0} at {1}", userDto.Id, DateTime.Now);
+
 
             return new ServiceResult<UserDto>
             {

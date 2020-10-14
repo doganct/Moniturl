@@ -4,3 +4,7 @@ obj
 .vscode
 appsettings.Development.json
 .DS_Store
+seq.json
+Documents
+Logs
+Stream

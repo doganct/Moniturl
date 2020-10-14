@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hangfire;
+using Microsoft.Extensions.Logging;
 using Moniturl.Core;
 using Moniturl.Data;
 using System;
@@ -15,17 +16,20 @@ namespace Moniturl.Service
         private readonly ITargetLogService _targetLogService;
         private readonly IMailService _mailService;
         private readonly IMapper _mapper;
+        private readonly ILogger<TargetService> _logger;
 
         public TargetService(
             IGenericRepository<Target> targetRepository,
             ITargetLogService targetLogService,
             IMailService mailService,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<TargetService> logger)
         {
             this._targetRepository = targetRepository;
             this._targetLogService = targetLogService;
             this._mailService = mailService;
             this._mapper = mapper;
+            this._logger = logger;
         }
 
         public async Task<ServiceResult<TargetDto>> AddAsync(TargetDto targetDto)
@@ -35,6 +39,7 @@ namespace Moniturl.Service
             var target = _mapper.Map<Target>(targetDto);
 
             var addedTarget = await _targetRepository.AddAsync(target);
+            _logger.LogInformation("Added new target with id: {0} at {1}", addedTarget.Id, DateTime.Now);
 
             return new ServiceResult<TargetDto>
             {
@@ -47,7 +52,7 @@ namespace Moniturl.Service
             var result = new ServiceResult();
 
             var target = await _targetRepository.GetByIdAsync(targetId);
-            if(target.UserId != userId)
+            if (target.UserId != userId)
             {
                 result.ErrorMessages.Add(string.Empty, Messages.Forbidden);
             }
@@ -66,16 +71,22 @@ namespace Moniturl.Service
                 var url = target.Url;
                 var response = await httpClient.GetAsync(url);
 
-                //save target log
+                var statusCode = ((int)response.StatusCode).ToString();
                 await _targetLogService.AddAsync(new TargetLogDto
                 {
-                    StatusCode = ((int)response.StatusCode).ToString(),
+                    StatusCode = statusCode,
                     TargetId = target.Id
                 });
+
+                _logger.LogInformation("Checked target http status with targetid: {0} at {1} and status was: {2}",
+                 target.Id,
+                 DateTime.Now,
+                 statusCode);
 
                 //update target
                 target.LastRequestTime = DateTime.Now;
                 await UpdateAsync(target);
+                _logger.LogInformation("Updated target with id: {0} at {1}", target.Id, DateTime.Now);
 
                 //if response another than 200, send mail or notification...
                 if (!response.IsSuccessStatusCode)
@@ -90,7 +101,7 @@ namespace Moniturl.Service
         public async Task<ServiceResult> DeleteAsync(int targetId)
         {
             await _targetRepository.Delete(targetId);
-
+            _logger.LogInformation("Deleted target with id: {0} at {1}", targetId, DateTime.Now);
             return new ServiceResult();
         }
 
@@ -138,6 +149,7 @@ namespace Moniturl.Service
             var target = _mapper.Map<Target>(targetDto);
 
             var updatedTarget = await _targetRepository.UpdateAsync(target);
+            _logger.LogInformation("Updated target with id: {0} at {1}", updatedTarget.Id, DateTime.Now);
 
             return new ServiceResult<TargetDto>
             {

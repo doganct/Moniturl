@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Moniturl.Core;
@@ -13,15 +14,18 @@ namespace Moniturl.Service
     {
         private readonly IGenericRepository<Mail> _mailRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<MailService> _logger;
         private readonly SmtpSettings _smtpSettings;
 
         public MailService(
             IGenericRepository<Mail> mailRepository,
             IMapper mapper,
-            IOptions<SmtpSettings> smtpSettings)
+            IOptions<SmtpSettings> smtpSettings,
+            ILogger<MailService> logger)
         {
             this._mailRepository = mailRepository;
             this._mapper = mapper;
+            this._logger = logger;
             this._smtpSettings = smtpSettings.Value;
         }
         public async Task<ServiceResult<MailDto>> AddAsync(MailDto mailDto)
@@ -74,12 +78,12 @@ namespace Moniturl.Service
             try
             {
                 await SendMailAsync(to, mailSubject, mailBody);
-
+                _logger.LogInformation("Mail sended to {0} at {1} successfully", to, DateTime.Now);
                 mailDto.IsSend = true;
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                _logger.LogError(ex, "Error when send mail to {0} at {1}", to, DateTime.Now);
                 mailDto.IsSend = false;
             }
             finally
