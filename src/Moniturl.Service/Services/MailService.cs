@@ -78,7 +78,7 @@ namespace Moniturl.Service
             try
             {
                 await SendMailAsync(to, mailSubject, mailBody);
-                _logger.LogInformation("Mail sended to {0} at {1} successfully", to, DateTime.Now);
+                _logger.LogInformation("Mail sended to {0} at {1} successfully, target url:{2}", to, DateTime.Now, targetDto.Url);
                 mailDto.IsSend = true;
             }
             catch (Exception ex)

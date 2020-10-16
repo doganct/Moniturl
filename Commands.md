@@ -7,4 +7,4 @@ To Update Database
 dotnet ef database update -p src/Moniturl.Data -s src/Moniturl.Hosting
 
 Docker setup
-docker run -d --restart unless-stopped --name seq -e ACCEPT_EULA=Y -v PATH:/data -p 8081:80 datalust/seq:latest
+docker run --name seq -d --restart unless-stopped -e ACCEPT_EULA=Y -p 5341:80 datalust/seq:latest
