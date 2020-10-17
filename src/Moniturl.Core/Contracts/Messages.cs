@@ -20,9 +20,13 @@ namespace Moniturl.Core
         public const string Url = "Url";
         public const string Interval = "Kontrol Süresi";
         public const string IntervalMustBeMinimumOne = "Kontrol Süresi en az 1 olabilir.";
+        public const string Card = "Detay";
         public const string Edit = "Düzenle";
         public const string Delete = "Sil";
         public const string TargetMailSubject = "Konu";
+        public const string Date = "Tarih";
+        public const string StatusCode = "Response Code";
+        
         public static string TargetMailBody(string name, string url, int interval, DateTime dateTime)
         {
             return $"Takip ettiğiniz {name} isimli {url} adresine {dateTime.ToString("dd.MM.yyyy HH:mm")} tarihinde erişim sağlanamamıştır. {interval} dakika sonra tekrar denenecektir.";

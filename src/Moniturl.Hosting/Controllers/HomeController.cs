@@ -15,11 +15,13 @@ namespace MonitUrl.Hosting.Controllers
     public class HomeController : BaseController
     {
         private readonly ITargetService _targetService;
+        private readonly ITargetLogService _targetLogService;
         private readonly IMapper _mapper;
 
-        public HomeController(ITargetService targetService, IMapper mapper)
+        public HomeController(ITargetService targetService, ITargetLogService targetLogService, IMapper mapper)
         {
             this._targetService = targetService;
+            this._targetLogService = targetLogService;
             this._mapper = mapper;
         }
 
@@ -50,6 +52,42 @@ namespace MonitUrl.Hosting.Controllers
 
             return Json(returnModel);
         }
+
+        public async Task<IActionResult> Card(int id)
+        {
+            var serviceResult = await _targetService.GetTargetAsync(id);
+
+            if (!serviceResult.Success)
+            {
+                AddModelErrors(serviceResult);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(serviceResult.Result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetTargetLogs(JqueryDatatableQueryModel model, int targetId)
+        {
+            var data = await _targetLogService.GetTargetLogsAsync(new TargetLogSearchParams
+            {
+                Search = model.Search.Value ?? "",
+                Take = Convert.ToInt32(model.Length),
+                Skip = Convert.ToInt32(model.Start),
+                TargetId = targetId
+            });
+
+            var returnModel = new JqueryDatatableResultModel<TargetLogDto>
+            {
+                Data = data.Result.Data,
+                Draw = model.Draw,
+                RecordsFiltered = data.Result.Count,
+                RecordsTotal = data.Result.Count
+            };
+
+            return Json(returnModel);
+        }
+
 
         [HttpGet]
         public IActionResult Create()

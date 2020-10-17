@@ -16,6 +16,7 @@
                     <th scope="col">@Messages.Name</th>
                     <th scope="col">@Messages.Url</th>
                     <th scope="col">@Messages.Interval</th>
+                    <th scope="col">@Messages.Card</th>
                     <th scope="col">@Messages.Edit</th>
                     <th scope="col">@Messages.Delete</th>
                 </tr>
@@ -80,6 +81,9 @@
                     { "data": "name", "name": "name", "autoWidth": true },
                     { "data": "url", "name": "url", "autoWidth": true },
                     { "data": "interval", "name": "interval", "autoWidth": true },
+                    {
+                        "render": function (data, type, row, meta) { return '<a class="btn btn-info" href="/Home/Card/' + row.id + '">Detay</a>'; }
+                    },
                     {
                         "render": function (data, type, row, meta) { return '<a class="btn btn-warning" href="/Home/Update/' + row.id + '">Düzenle</a>'; }
                     },
