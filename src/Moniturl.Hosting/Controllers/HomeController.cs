@@ -40,13 +40,15 @@ namespace MonitUrl.Hosting.Controllers
                 UserId = UserId
             });
 
-            return Json(new
+            var returnModel = new JqueryDatatableResultModel<TargetDto>
             {
-                draw = model.Draw,
-                recordsFiltered = data.Result.Count,
-                recordsTotal = data.Result.Count,
-                data = data.Result.Data
-            });
+                Data = data.Result.Data,
+                Draw = model.Draw,
+                RecordsFiltered = data.Result.Count,
+                RecordsTotal = data.Result.Count
+            };
+
+            return Json(returnModel);
         }
 
         [HttpGet]
