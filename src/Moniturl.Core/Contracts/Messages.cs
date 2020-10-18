@@ -10,7 +10,7 @@ namespace Moniturl.Core
         public const string ThisEmailAddressIsNotAvailable = "Bu email adresi kullanılmaktadır.";
         public const string CheckYourEmailAddressOrPassword = "Email adresinizi veya şifrenizi kontrol ediniz.";
         public const string PleaseEnterEmailAddressCorrectFormat = "Lütfen uygun formatta bir email giriniz.";
-        public const string CheckYourUrl = "Lütfen uygun formatta bir url giriniz.";
+        public const string CheckYourUrl = "Lütfen uygun formatta bir url giriniz. Url http:// veya https:// ile başlamalıdır ve genel url formatlarına uymalıdır.";
         public const string PleaseFillEmail = "Lütfen email alanını doldurunuz.";
         public const string PleaseFillPassword = "Lütfen şifre alanını doldurunuz.";
         public const string ThisFieldIsRequired = "Bu alan zorunludur.";
