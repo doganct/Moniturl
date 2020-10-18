@@ -55,6 +55,13 @@ namespace MonitUrl.Hosting.Controllers
 
         public async Task<IActionResult> Card(int id)
         {
+            var isAuthResult = await _targetService.CheckAuthorization(id, UserId);
+            if (!isAuthResult.Success)
+            {
+                AddModelErrors(isAuthResult);
+                return View(nameof(Index));
+            }
+
             var serviceResult = await _targetService.GetTargetAsync(id);
 
             if (!serviceResult.Success)
@@ -69,6 +76,18 @@ namespace MonitUrl.Hosting.Controllers
         [HttpPost]
         public async Task<IActionResult> GetTargetLogs(JqueryDatatableQueryModel model, int targetId)
         {
+            var isAuthResult = await _targetService.CheckAuthorization(targetId, UserId);
+            if (!isAuthResult.Success)
+            {
+                return Json(new JqueryDatatableResultModel<TargetLogDto>
+                {
+                    Data = new List<TargetLogDto>(),
+                    Draw = model.Draw,
+                    RecordsFiltered = 0,
+                    RecordsTotal = 0
+                });
+            }
+
             var data = await _targetLogService.GetTargetLogsAsync(new TargetLogSearchParams
             {
                 Search = model.Search.Value ?? "",
