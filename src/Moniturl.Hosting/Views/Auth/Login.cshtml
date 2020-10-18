@@ -26,6 +26,7 @@
         @Html.LabelFor(x => x.Password, new { @class = "sr-only" })
         @Html.PasswordFor(x => x.Password, new { @class = "form-control", @placeholder = "Şifre", @required = "required" })
         @Html.ValidationMessageFor(x => x.Password)
+        @Html.ValidationSummary(true)
         <button class="btn btn-lg btn-primary btn-block" type="submit">Giriş Yap</button>
         <a href="@Url.Action("Register","Auth")" class="btn btn-lg btn-success btn-block">Üye Ol</a>
         <p class="mt-5 mb-3 text-muted">&copy; 2020</p>

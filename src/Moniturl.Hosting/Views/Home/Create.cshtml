@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
                 @Html.LabelFor(x => x.Interval)
-                @Html.TextBoxFor(x => x.Interval, new { @type="number", @min="1", @class = "form-control numeric-only", @placeholder = $"{Messages.Interval} (dakika)" })
+                @Html.TextBoxFor(x => x.Interval, new { @type = "number", @min = "1", @class = "form-control numeric-only", @placeholder = $"{Messages.Interval} (dakika)" })
                 @Html.ValidationMessageFor(x => x.Interval)
             </div>
             @Html.ValidationSummary(true)
